@@ -1,0 +1,92 @@
+- block:
+  - block:
+    - name: "[openrc] [lineinfile] add {{ timezone }} to /etc/timezone"
+      lineinfile:
+        path:   /etc/timezone
+        create: yes
+        line:   "{{ timezone }}"
+
+    - name: "[openrc] [shell] reconfigure the sys-libs/timezone-data package"
+      shell: emerge --config sys-libs/timezone-data
+      when:  os == "gentoo"
+
+    when: sysinit == "openrc"
+
+  - name: "[systemd] [file] link zoneinfo/{{ timezone }} to /etc/localtime"
+    file:
+      src:   "/usr/share/zoneinfo/{{ timezone }}"
+      dest:  /etc/localtime
+      state: link
+      force: yes
+    when: sysinit == "systemd"
+
+  - name: "[copy] set default language to local.gen"
+    copy:
+      dest: /etc/locale.gen
+      content: |
+        en_US.UTF-8 UTF-8
+        fr_FR.UTF-8 UTF-8
+        fr_FR ISO-8859-1
+        fr_FR@euro ISO-8859-15
+        en_US ISO-8859-1
+        # ja_JP.UTF-8                 # japanese, KO: ne fonctionne pas sans certains package préinstallé
+        # zh_CN.UTF-8 UTF-8           # chinese, //
+    register: _local_gen
+
+  - name: "[shel] generate local language"
+    shell: locale-gen
+    when:  _local_gen.changed
+
+  - name: "[set_fact] define /etc/local_file"
+    set_fact:
+      _local_dest: "{{ 'locale.conf' if sysinit in 'systemd' else 'env.d/02locale' if sysinit in 'openrc' }}"
+
+  - name: "[copy] define default language to {{ _local_dest }}"
+    copy:
+      dest: "/etc/{{ _local_dest }}"
+      content: |
+        LANG="fr_FR.UTF-8"
+        LANGUAGE="fr_FR:en_US"
+        # LANG="en_US.UTF-8"
+        # LANGUAGE="en_US:fr_FR"
+        # LC_COLLATE="C.UTF-8"
+
+  ## vérifier si gentoo l'utilise
+  - name: "[lineinfile] configure tty console font"
+    lineinfile:
+      path: /etc/vconsole.conf
+      create: yes
+      line: |
+        KEYMAP=fr-latin9
+        FONT=lat9w-16
+        FONT_MAP=
+    # when: host.os == "arch"
+
+  - name: "[copy] setup keyboard configuration"
+    when: ansible_distribution == "Gentoo"
+    copy:
+      dest: /etc/conf.d/keymaps
+      content: |
+        # see /usr/share/keymaps for complete tree of keymaps
+        keymap="fr"
+
+        # non-x86 users should set as "no"
+        # loading this keymap will enable VT switching (like ALT+Left/Right)
+        windowkeys="YES"
+        ## windowkeys="yes"     ## A TESTER
+
+        # the maps to load for extended keyboards
+        extended_keymaps=""
+        #extended_keymaps="backspace keypad euro2"
+
+        # Tell dumpkeys(1) to interpret character action codes to be
+        # from the specified character set.
+        # This only matters if you set unicode="yes" in /etc/rc.conf.
+        # For a list of valid sets, run `dumpkeys --help`
+        dumpkeys_charset=""
+
+        # Some fonts map AltGr-E to the currency symbol instead of the Euro.
+        fix_euro="NO"
+        ## fix_euro="yes"       ## A TESTER
+
+  tags: language
