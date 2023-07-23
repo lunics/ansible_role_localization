@@ -1,0 +1,16 @@
+timezone: America/New_York
+
+locales:  # generate US English and Czech languages and remove Chinese
+  - name:  en_US.UTF-8
+  - name:  cs_CZ.UTF-8
+    state: present
+  - name:  de_CH.UTF-8
+    state: absent
+
+locales_conf:
+  LANG:    en_US.UTF-8    # programs in US
+  LC_TIME: cs_CZ.UTF-8    # time in Czech format
+
+keymap:
+  KEYMAP: de-latin1   # German keyboard
+  FONT:   eurlatgr    # German console

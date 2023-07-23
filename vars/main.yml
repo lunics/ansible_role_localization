@@ -1,0 +1,34 @@
+_locale_path:
+  default:   /etc/locale.conf
+  Archlinux: /etc/locale.conf
+
+_vconsole_path:
+  default:   /etc/vconsole.conf
+  Archlinux: /etc/vconsole.conf
+
+locale_vars:
+  - LANG
+  - LANGUAGE
+  - LC_ADDRESS
+  - LC_COLLATE
+  - LC_CTYPE
+  - LC_IDENTIFICATION
+  - LC_MONETARY
+  - LC_MESSAGES
+  - LC_MEASUREMENT
+  - LC_NAME
+  - LC_NUMERIC
+  - LC_PAPER
+  - LC_TELEPHONE
+  - LC_TIME
+  - LC_ALL
+
+keymap_vars:
+  - KEYMAP
+  - KEYMAP_TOGGLE
+  - FONT
+  - FONT_MAP
+  - FONT_UNIMAP
+
+locale_path:   "{{ _locale_path[ansible_os_family]   | default(_locale_path['default'])   }}"
+vconsole_path: "{{ _vconsole_path[ansible_os_family] | default(_vconsole_path['default']) }}"

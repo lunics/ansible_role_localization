@@ -1,0 +1,19 @@
+- block:
+  # - name: "[lineinfile] configure tty console font"
+  #   lineinfile:
+  #     path: /etc/vconsole.conf
+  #     create: yes
+  #     line: |
+  #       KEYMAP=fr-latin9
+  #       FONT=lat9w-16
+  #       FONT_MAP=
+
+  - name: locales | generate tty console keyboard and font
+    template:
+      src:   vconsole.conf
+      dest:  "{{ vconsole_path }}"
+      owner: root
+      group: root
+      mode:  0644
+
+  tags: keymap
