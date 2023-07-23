@@ -5,7 +5,7 @@ Only tested on Archlinux.
 See [archlinux locale](https://wiki.archlinux.org/title/Locale) to learn.
 
 ## Usage
-See [defaults](https://github.com/lunics/ansible_role_localization/tree/main/defaults/main)
+See [defaults](https://github.com/lunics/ansible_role_localization/blob/main/defaults/main.yml)
 ```yaml
 timezone: America/New_York
 
