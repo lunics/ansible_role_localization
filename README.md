@@ -24,5 +24,3 @@ keymap:
   KEYMAP: de-latin1       # German keyboard
   FONT:   eurlatgr        # German console
 ```
-TODO:
-- try locales with and without name key
