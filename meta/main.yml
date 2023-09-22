@@ -1,7 +1,7 @@
 galaxy_info:
   role_name:    localization
   author:       lunics
-  description:  A role to setup system localization
+  description:  A role to setup system localization.
   license:      GPL-3.0
   company:      none
   min_ansible_version: 2.1
