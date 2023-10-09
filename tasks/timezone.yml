@@ -1,18 +1,19 @@
 - block:
-  # can't run in chroot: fatal: [chroot]: FAILED! => {"changed": false, "msg": "Error message:\ntried to configure name using a file \"/etc/sysconfig/clock\", but could not write to it"}
+  # KO in chroot: file "/etc/sysconfig/clock" doesn't exist in Arch ?
   - name: timezone | set timezone to {{ timezone }}
     timezone:
       name: "{{ timezone }}"
     when: not chroot
 
+  # OK in chroot
   - name: timezone | file > link zoneinfo/{{ timezone }} to /etc/localtime
     file:
       src:   "/usr/share/zoneinfo/{{ timezone }}"
       dest:  /etc/localtime
       state: link
       force: yes
-    when: sysinit == "systemd"
-    when: chroot
+    when:
+      - chroot
 
   when: timezone | length
   tags: timezone
